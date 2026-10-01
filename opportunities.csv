@@ -1,17 +1,19 @@
 rank,idea,material,tier,demand,fit,margin,gap,effort,synergy,safety,score
-1,Discontinued interior bezels/knobs/vent caps (local classics),ASA/ABS,B/C,4,5,5,5,3,5,4,4.55
-2,Interior trim clip & retainer kits by model,ASA/PETG,A/B,4,5,3,4,5,4,5,4.15
-3,"E36 hardware kits: skirt brackets, clips, end caps",ASA/PETG+PA6-CF,B,3,5,4,4,4,5,4,4.1
-4,Camera car-mount accessories (Rawspeed),PA6-CF/PETG,B/C,3,5,5,3,4,5,3,4.1
-5,Aux-light brackets / mate mount,PA6-CF,C,3,5,5,4,3,4,3,4.05
-6,"Track-day mounts (camera, logger, dash)",PA6-CF,C,3,5,4,3,4,5,3,3.9
-7,Model-specific console/cupholder inserts,ASA,B,3,5,4,3,4,4,5,3.9
-8,"UTN / SGS tooling, jigs, prototypes",PETG/PA6-CF,B/C,3,5,4,4,3,3,5,3.85
-9,Model-specific phone mounts,ASA,B,4,5,3,2,5,4,5,3.85
-10,Custom badges/emblems (own designs),ASA/PETG,A/B,4,4,4,3,4,4,2,3.75
-11,Plugs & patterns for fiberglass/silicone casting,PLA/PETG+finish,C,3,4,4,4,2,5,4,3.7
-12,Engine-bay cable management,PAHT-CF,C,3,4,4,4,4,3,4,3.7
-13,Gauge pods / aux gauge housings,ASA,B,3,4,4,3,3,4,4,3.55
-14,STL licensing (Printables/Cults),digital,-,2,5,3,2,3,4,5,3.25
-15,M-style side moldings in segments,TPU/ASA,B,3,3,3,3,2,5,4,3.15
-16,"Full E36 side skirts, segmented FDM",ASA,C,3,1,2,3,1,5,3,2.4
+1,"Alfa Romeo 33/145/155/164/916: interior trim, vents, handles",ASA/ABS,B/C,5,5,5,5,3,5,4,4.75
+2,"BMW E30/E36/E34: interior clips, trim, regulator clips",ASA/PETG,A/B,5,5,4,4,4,5,4,4.5
+3,Honda Civic/Integra/Accord/CRX: interior plastics,ASA/PETG,A/B,5,5,4,4,4,5,4,4.5
+4,General clip & retainer kits (any pre-2000 car),ASA/PETG,A,4,5,3,4,5,4,5,4.15
+5,"E36 hardware kits: skirt brackets, molding clips, end caps",ASA/PETG+PA6-CF,B,3,5,4,4,4,5,4,4.1
+6,Camera car-mount accessories (Rawspeed),PA6-CF/PETG,B/C,3,5,5,3,4,5,3,4.1
+7,General non-pressure brackets and mounts,PA6-CF/ASA,B/C,3,5,5,4,3,4,3,4.05
+8,Aux-light brackets / mate mount,PA6-CF,C,3,5,5,4,3,4,3,4.05
+9,"Track-day mounts (camera, logger, dash)",PA6-CF,C,3,5,4,3,4,5,3,3.9
+10,Model-specific console/cupholder inserts,ASA,B,3,5,4,3,4,4,5,3.9
+11,"UTN / SGS tooling, jigs, prototypes",PETG/PA6-CF,B/C,3,5,4,4,3,3,5,3.85
+12,Model-specific phone mounts,ASA,B,4,5,3,2,5,4,5,3.85
+13,Custom badges/emblems (own designs),ASA/PETG,A/B,4,4,4,3,4,4,2,3.75
+14,Patterns for casting rare bodies and panels,PLA/PETG+finish,C,3,4,4,4,2,4,4,3.6
+15,Gauge pods / aux gauge housings,ASA,B,3,4,4,3,3,4,4,3.55
+16,STL licensing (Printables/Cults),digital,-,2,5,3,2,3,4,5,3.25
+17,M-style side moldings in segments,TPU/ASA,B,3,3,3,3,2,5,4,3.15
+18,"Full E36 side skirts, segmented FDM",ASA,C,3,1,2,3,1,5,3,2.4

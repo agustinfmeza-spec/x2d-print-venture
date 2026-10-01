@@ -101,6 +101,7 @@ svg text{fill:var(--muted);font:11px var(--f-mono)}
   <nav class="tabs" role="tablist">
     <button role="tab" aria-selected="true" data-tab="dash">Dashboard</button>
     <button role="tab" aria-selected="false" data-tab="cal">30-day calendar</button>
+    <button role="tab" aria-selected="false" data-tab="parts">Parts targets</button>
     <button role="tab" aria-selected="false" data-tab="log">Log data</button>
     <button role="tab" aria-selected="false" data-tab="coach">Coach</button>
   </nav>
@@ -121,6 +122,7 @@ svg text{fill:var(--muted);font:11px var(--f-mono)}
   </div>
   <div class="cols">
     <div class="panel"><h3>Channels vs. targets</h3><div id="channels"></div></div>
+    <div class="panel"><h3>By car brand</h3><p class="label" style="margin:6px 0 0">Which cars bring the work</p><div class="scroll" id="brands"></div></div>
     <div class="panel"><h3>What is selling</h3><p class="label" style="margin:6px 0 0">Leads and wins by source</p><div class="scroll" id="sources"></div></div>
   </div>
   <div class="panel" style="margin-top:12px">
@@ -143,6 +145,15 @@ svg text{fill:var(--muted);font:11px var(--f-mono)}
   <div class="row" style="margin-top:12px"><span class="pill" id="calProgress"></span>
     <label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hideDone" style="width:auto"> Hide done</label></div>
   <div id="calList"></div>
+</section>
+
+<!-- PARTS TARGETS -->
+<section class="tab" id="tab-parts">
+  <div class="row between"><h2>Parts targets · cars before 2000</h2>
+    <div class="row"><label for="brandFilter" style="margin:0">Brand</label><select id="brandFilter" style="width:auto"><option value="">All</option><option>Honda</option><option>BMW</option><option>Alfa Romeo</option><option>General</option></select></div></div>
+  <p style="color:var(--muted);margin:6px 0 0">Starting list for Honda, BMW and Alfa Romeo, the brands you know, plus general parts. The part types are common failure points on old cars, not a verified parts list. Ask owners and club admins which exact parts are missing, then set a status. Open a card for details.</p>
+  <div class="row" style="margin-top:12px"><span class="pill" id="partsProgress"></span></div>
+  <div id="partsList"></div>
 </section>
 
 <!-- LOG -->
@@ -184,6 +195,8 @@ svg text{fill:var(--muted);font:11px var(--f-mono)}
         <div><label for="lSource">Source</label><select id="lSource"><option>Instagram DM</option><option>WhatsApp group</option><option>Track day / meet</option><option>Rawspeed client</option><option>Referral</option><option>UTN</option><option>SGS</option><option>Other</option></select></div>
         <div><label for="lTier">Tier</label><select id="lTier"><option value="A">A · desk/consumer</option><option value="B">B · functional</option><option value="C">C · structural</option></select></div>
         <div><label for="lStatus">Status</label><select id="lStatus"><option value="quote">Quoted</option><option value="won">Won</option><option value="delivered">Delivered</option><option value="lost">Lost</option></select></div>
+        <div><label for="lBrand">Brand</label><select id="lBrand"><option>Honda</option><option>BMW</option><option>Alfa Romeo</option><option>Other</option></select></div>
+        <div><label for="lModel">Model / year</label><input id="lModel" placeholder="e.g. E36 1996"></div>
         <div class="wide"><label for="lCustomer">Customer</label><input id="lCustomer"></div>
         <div class="wide"><label for="lPart">Part</label><input id="lPart" placeholder="e.g. Aux-light bracket, PA6-CF"></div>
         <div><label for="lPrice">Price (ARS)</label><input type="number" id="lPrice" min="0"></div>
@@ -225,14 +238,14 @@ var FORMATS=["Reel","Carousel","Photo","Story","WhatsApp group","Meet / track da
 
 var CAL=[
 [1,"Reel","Process","Announcement: structural parts for cars","Voy a imprimir piezas estructurales para autos, en fibra de carbono. Esto es lo que viene.","Clips of your car/gear + CAD on screen; 20s; voiceover.","Seguime para ver el proceso.","Reach, follows"],
-[2,"Story","Community","Poll: which part always breaks?","¿Qué pieza de tu auto se rompe siempre o no se consigue?","Poll sticker + question box; screenshot answers.","Contestá en la caja.","Replies count"],
+[2,"Story","Community","Poll: which part always breaks?","¿Qué pieza de tu Honda, BMW o Alfa no se consigue más?","Poll sticker + question box by brand (Honda / BMW / Alfa / other); screenshot answers.","Contestá en la caja.","Replies count"],
 [3,"Carousel","Education","Why PLA does not belong in a car","Un auto al sol llega a 70 °C. El PLA se ablanda a 55 °C.","5 slides: temp, PLA, PETG, ASA, PA6-CF.","Guardalo antes de comprar.","Saves, shares"],
 [4,"Reel","Process","CAD time-lapse of a bracket","De una medición a una pieza en pantalla en 25 segundos.","Calipers on the car, CAD capture, final render.","Decime qué pieza modelo después.","Watch time"],
 [5,"Story","Community","Question box: what first?","¿Qué querés que haga primero? Elijo 3.","Question box over a car shot.","Votá en stories.","Replies"],
 [6,"Photo","Proof","Render on the real car with dimensions","Así va a quedar. Medido en el auto, no inventado.","Rawspeed-quality car photo + render overlay.","Escribime si querés una igual.","Saves, DMs"],
 [7,"Review","Admin","Pick 3 hero parts from the poll","Internal: tally votes, choose one part per tier.","Spreadsheet only. Update Log tab.","—","Plan fit"],
 [8,"Reel","Education","PA6-CF vs PETG vs ASA in 20 seconds","¿Qué material va en cada lugar del auto?","Three sample parts on a table, text overlay.","Mandame tu caso.","Shares, DMs"],
-[9,"WhatsApp group","Community","Introduce yourself in one car group","Hola, soy Agus. Estoy armando piezas a medida. ¿Qué les falta?","One short text + one photo. No selling.","Preguntales qué necesitan.","Replies"],
+[9,"WhatsApp group","Community","Introduce yourself in one car group","Hola, soy Agus. Imprimo repuestos de autos viejos que ya no se consiguen. ¿Qué les falta?","One short text + one photo. No selling.","Preguntales qué necesitan.","Replies"],
 [10,"Carousel","Process","How I design a part: measure, CAD, inserts","Cuatro pasos para que una pieza encaje la primera vez.","Photos of measuring, CAD, heat-set insert.","Guardalo.","Saves"],
 [11,"Reel","Proof","Cardboard fit test on the car","Antes de imprimir, probamos el tamaño en cartón.","Cardboard mock-up fitted; reaction shot.","Seguime para ver la pieza real.","Watch time"],
 [12,"Story","Offer","Pre-sale: 6 early spots with discount","Abro 6 lugares con descuento para los primeros trabajos.","Text card + form link or WhatsApp.","Escribime 'cupo'.","DMs, leads"],
@@ -256,6 +269,24 @@ var CAL=[
 [30,"Reel","Process","Month 1 recap and month 2 teaser","30 días: lo que construí y lo que viene.","Best clips of the month, numbers on screen.","Seguime para el mes 2.","Reach, follows"]
 ];
 
+/* Parts targets: cars before 2000. Part types are typical failure categories; confirm each with owners/clubs (VERIFY). */
+var STATUSES=["idea","validating","designed","printed","selling","dropped"];
+var CAT=[
+["h1","Honda","Civic EG/EK, Integra DC2 (1992–2000)","Interior small plastics","HVAC and radio knobs, switch surrounds, door-card and trim clips, visor clips, ashtray and cup-holder parts","ASA/PETG","A/B"],
+["h2","Honda","Accord CD/CE, Prelude (1990–1997)","Console and glove-box parts","Console-lid hinges and latches, glove-box latch, trim clips, vent louvers","ASA/PETG","B"],
+["h3","Honda","CRX, Civic EF (to 1991)","Oldest plastics, most brittle","Console and vent pieces, switch caps, door-card clips, seat-belt guides","ASA","B"],
+["b1","BMW","E30 (1982–1994)","Interior clips and trim","Door-card and trim clips, vent louvers, switch caps, window-regulator clips, end caps","ASA/PETG","A/B"],
+["b2","BMW","E36 (1991–1999)","Clips, hardware and trim","Door-card clips, window-regulator clips, side-skirt and molding brackets and end caps (with your friend)","ASA/PETG, PA6-CF for load","B"],
+["b3","BMW","E34, E28 (1980s–1996)","Interior trim and clips","Trim clips, vent louvers, console and switch pieces","ASA/PETG","A/B"],
+["a1","Alfa Romeo","33, 145, 146 (to 2000)","Interior trim, vents, handles","Vent grills, door-handle and pull covers, trim clips, console pieces","ASA/ABS","B"],
+["a2","Alfa Romeo","155, 156 (first gen), 164","Switch bezels and console","Switch bezels, door pulls, console and mirror-cover pieces, trim clips","ASA/ABS","B/C"],
+["a3","Alfa Romeo","Spider and GTV 916 (1994–2000)","Interior trim, low volume","Interior trim, console parts, headliner and trim clips","ASA/ABS","B/C"],
+["g1","General","Any pre-2000 car","Clip and retainer kits","Trim clips, grommets, fuse-box covers, wiper-arm caps, door-lock knobs, hood-prop clips, license-plate screw caps","ASA/PETG","A"],
+["g2","General","Any pre-2000 car","Non-pressure brackets and mounts","Battery hold-downs, cable and hose brackets, aux-switch panels, radio-delete plates","PA6-CF/ASA","B/C"],
+["g3","General","Rare or low-volume cars","Patterns for casting","Print and finish a master, cast silicone molds, pour copies. One master serves many copies","PLA/PETG","C"]
+];
+var BRANDS_NEXT="Other brands that tend to lose support and could join later: Fiat/Lancia, Peugeot 205/405, Renault 9/11/19/21, Ford Escort/Sierra, VW Golf Mk3, Mercedes W124/W201.";
+
 /* ---------- helpers ---------- */
 var $=function(id){return document.getElementById(id)};
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -271,7 +302,7 @@ function fmtDay(s){return new Date(s+"T12:00:00").toLocaleDateString("en-GB",{we
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
 
 /* ---------- store: shared db when available, otherwise this browser only ---------- */
-var data={posts:[],leads:[],cal:[],settings:[]};
+var data={posts:[],leads:[],cal:[],settings:[],targets:[]};
 var store={mode:"local",db:null};
 function lsGet(k){try{return JSON.parse(localStorage.getItem("x2d_"+k)||"[]")}catch(e){return []}}
 function lsSet(k){try{localStorage.setItem("x2d_"+k,JSON.stringify(data[k]))}catch(e){}}
@@ -343,6 +374,10 @@ function renderDash(){
     met("WhatsApp group posts",String(wa.length),"target 1 per month, 3 groups",st(wa.length>=1,false))+
     met("Events attended",String(ev.length),"target 1–2 per month",st(ev.length>=1,false))+
     met("Event conversations",String(convos),"target 3–5 per event",st(ev.length&&convos/ev.length>=3,convos>0));
+  // brands
+  var bb={};data.leads.forEach(function(l){var k=l.brand||"Unspecified";bb[k]=bb[k]||{n:0,won:0,rev:0};bb[k].n++;if(l.status==="won"||l.status==="delivered"){bb[k].won++;bb[k].rev+=num(l.price)}});
+  var bk=Object.keys(bb).sort(function(a,b){return bb[b].rev-bb[a].rev});
+  $("brands").innerHTML=bk.length?'<table><thead><tr><th>Brand</th><th class="r">Leads</th><th class="r">Won</th><th class="r">Revenue</th></tr></thead><tbody>'+bk.map(function(k){var b=bb[k];return '<tr><td>'+esc(k)+'</td><td class="r num">'+b.n+'</td><td class="r num">'+b.won+'</td><td class="r num">'+ars(b.rev)+'</td></tr>'}).join("")+'</tbody></table>':'<div class="empty">No leads yet. Choose a brand when you log a lead and this fills in.</div>';
   // sources
   var by={};data.leads.forEach(function(l){var k=l.source||"Other";by[k]=by[k]||{n:0,won:0,rev:0};by[k].n++;if(l.status==="won"||l.status==="delivered"){by[k].won++;by[k].rev+=num(l.price)}});
   var keys=Object.keys(by).sort(function(a,b){return by[b].rev-by[a].rev});
@@ -398,19 +433,43 @@ $("calList").addEventListener("click",function(e){
 $("hideDone").addEventListener("change",renderCal);
 $("startDate").addEventListener("change",function(){var v=$("startDate").value;if(!v)return;startDate=v;put("settings","main",{startDate:v});renderCal()});
 
+/* ---------- parts targets ---------- */
+function tgtRec(id){return data.targets.find(function(x){return x.id===id})}
+function renderParts(){
+  var f=$("brandFilter").value,h="",counts={};
+  CAT.forEach(function(c){
+    if(f&&c[1]!==f)return;
+    var r=tgtRec(c[0]),st=(r&&r.status)||"idea",note=(r&&r.note)||"";counts[st]=(counts[st]||0)+1;
+    var cls=st==="selling"?"good":(st==="dropped"?"bad":(st==="idea"?"":"warn"));
+    h+='<details class="card" data-t="'+c[0]+'"><summary><span class="day" style="font-size:16px;min-width:88px">'+esc(c[1])+'</span><span><b>'+esc(c[2])+'</b><br><span class="label">'+esc(c[3])+' · '+esc(c[5])+' · tier '+esc(c[6])+'</span></span><span class="pill '+cls+'">'+st+'</span></summary>'+
+    '<div class="body"><div><span class="label">Part types to check</span><br>'+esc(c[4])+'</div><div class="fields" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))"><div><label for="st_'+c[0]+'">Status</label><select id="st_'+c[0]+'" data-tstatus="'+c[0]+'">'+STATUSES.map(function(x){return '<option'+(x===st?' selected':'')+'>'+x+'</option>'}).join("")+'</select></div><div class="wide"><label for="nt_'+c[0]+'">Note (parts requested, who asked, price seen)</label><input id="nt_'+c[0]+'" data-tnote="'+c[0]+'" value="'+esc(note)+'"></div></div></div></details>';
+  });
+  h+='<p class="label" style="margin-top:14px">'+esc(BRANDS_NEXT)+'</p>';
+  $("partsList").innerHTML=h;
+  $("partsProgress").textContent=STATUSES.map(function(x){return (counts[x]||0)+" "+x}).join(" · ");
+  var o=window.__openT;if(o){var el=document.querySelector('details[data-t="'+o+'"]');if(el)el.open=true}
+}
+$("brandFilter").addEventListener("change",renderParts);
+$("partsList").addEventListener("change",function(e){
+  var s=e.target.closest("select[data-tstatus]");if(!s)return;
+  var id=s.dataset.tstatus,r=tgtRec(id)||{};window.__openT=id;put("targets",id,{status:s.value,note:r.note||""})});
+$("partsList").addEventListener("focusout",function(e){
+  var n=e.target.closest("input[data-tnote]");if(!n)return;
+  var id=n.dataset.tnote,r=tgtRec(id)||{};if((r.note||"")===n.value)return;window.__openT=id;put("targets",id,{status:r.status||"idea",note:n.value})});
+
 /* ---------- log tables & forms ---------- */
 function renderLog(){
   var ps=data.posts.slice().sort(function(a,b){return a.date<b.date?1:-1});
   $("postTable").innerHTML=ps.length?'<table><thead><tr><th>Date</th><th>Format</th><th>Topic</th><th class="r">Reach</th><th class="r">Likes</th><th class="r">Saves</th><th class="r">Shares</th><th class="r">DMs</th><th class="r">Eng %</th><th></th></tr></thead><tbody>'+ps.map(function(p){var e=num(p.reach)?((num(p.likes)+num(p.comments)+num(p.saves)+num(p.shares))/num(p.reach)*100).toFixed(1):"–";return '<tr><td class="num">'+esc(p.date)+'</td><td>'+esc(p.format)+'</td><td>'+esc(p.topic)+(p.day?' <span class="pill">day '+esc(p.day)+'</span>':'')+'</td><td class="r num">'+num(p.reach)+'</td><td class="r num">'+num(p.likes)+'</td><td class="r num">'+num(p.saves)+'</td><td class="r num">'+num(p.shares)+'</td><td class="r num">'+num(p.dms)+'</td><td class="r num">'+e+'</td><td><button class="link" data-del="posts" data-id="'+esc(p.id)+'">delete</button></td></tr>'}).join("")+'</tbody></table>':'<div class="empty">No posts yet. Add one above, or tick a day in the calendar and choose “Log results”.</div>';
   var ls=data.leads.slice().sort(function(a,b){return a.date<b.date?1:-1});
-  $("leadTable").innerHTML=ls.length?'<table><thead><tr><th>Date</th><th>Source</th><th>Customer</th><th>Part</th><th>Tier</th><th>Status</th><th class="r">Price</th><th class="r">Margin</th><th></th></tr></thead><tbody>'+ls.map(function(l){return '<tr><td class="num">'+esc(l.date)+'</td><td>'+esc(l.source)+'</td><td>'+esc(l.customer)+'</td><td>'+esc(l.part)+'</td><td>'+esc(l.tier)+'</td><td><select data-status="'+esc(l.id)+'" aria-label="Status" style="width:auto">'+["quote","won","delivered","lost"].map(function(s){return '<option value="'+s+'"'+(l.status===s?' selected':'')+'>'+s+'</option>'}).join("")+'</select></td><td class="r num">'+ars(l.price)+'</td><td class="r num">'+ars(margin(l))+'</td><td><button class="link" data-del="leads" data-id="'+esc(l.id)+'">delete</button></td></tr>'}).join("")+'</tbody></table>':'<div class="empty">No leads yet. Log every quote, won or lost, so the dashboard can show which channel sells.</div>';
+  $("leadTable").innerHTML=ls.length?'<table><thead><tr><th>Date</th><th>Source</th><th>Car</th><th>Customer</th><th>Part</th><th>Tier</th><th>Status</th><th class="r">Price</th><th class="r">Margin</th><th></th></tr></thead><tbody>'+ls.map(function(l){return '<tr><td class="num">'+esc(l.date)+'</td><td>'+esc(l.source)+'</td><td>'+esc(l.brand||'')+' '+esc(l.model||'')+'</td><td>'+esc(l.customer)+'</td><td>'+esc(l.part)+'</td><td>'+esc(l.tier)+'</td><td><select data-status="'+esc(l.id)+'" aria-label="Status" style="width:auto">'+["quote","won","delivered","lost"].map(function(s){return '<option value="'+s+'"'+(l.status===s?' selected':'')+'>'+s+'</option>'}).join("")+'</select></td><td class="r num">'+ars(l.price)+'</td><td class="r num">'+ars(margin(l))+'</td><td><button class="link" data-del="leads" data-id="'+esc(l.id)+'">delete</button></td></tr>'}).join("")+'</tbody></table>':'<div class="empty">No leads yet. Log every quote, won or lost, so the dashboard can show which channel sells.</div>';
 }
 document.addEventListener("click",function(e){var b=e.target.closest("button[data-del]");if(b)del(b.dataset.del,b.dataset.id)});
 document.addEventListener("change",function(e){var s=e.target.closest("select[data-status]");if(!s)return;var l=data.leads.find(function(x){return x.id===s.dataset.status});if(l){var o=Object.assign({},l);o.status=s.value;put("leads",l.id,o)}});
 function pickPost(){return{date:$("pDate").value,format:$("pFormat").value,day:$("pDay").value?parseInt($("pDay").value,10):null,topic:$("pTopic").value.trim(),reach:num($("pReach").value),likes:num($("pLikes").value),comments:num($("pComments").value),saves:num($("pSaves").value),shares:num($("pShares").value),dms:num($("pDms").value),followers:num($("pFollow").value),convos:num($("pConvos").value)}}
 $("postForm").addEventListener("submit",function(e){e.preventDefault();var p=pickPost();put("posts",uid(),p).then(function(){$("postForm").reset();$("pDate").value=today();toast("Post added")})});
 $("leadForm").addEventListener("submit",function(e){e.preventDefault();
-  var l={date:$("lDate").value,source:$("lSource").value,customer:$("lCustomer").value.trim(),part:$("lPart").value.trim(),tier:$("lTier").value,status:$("lStatus").value,price:num($("lPrice").value),cost:num($("lCost").value)};
+  var l={date:$("lDate").value,brand:$("lBrand").value,model:$("lModel").value.trim(),source:$("lSource").value,customer:$("lCustomer").value.trim(),part:$("lPart").value.trim(),tier:$("lTier").value,status:$("lStatus").value,price:num($("lPrice").value),cost:num($("lCost").value)};
   put("leads",uid(),l).then(function(){$("leadForm").reset();$("lDate").value=today();toast("Lead added")})});
 
 /* ---------- Claude: smart add + coach ---------- */
@@ -424,14 +483,14 @@ var smartRows=null;
 $("smartGo").addEventListener("click",function(){
   var txt=$("smartText").value.trim();if(!txt||!sample)return;
   $("smartGo").disabled=true;$("smartMsg").textContent="Reading…";$("smartOut").innerHTML="";
-  var prompt='You extract structured rows for an Argentine 3D-printing side business (Instagram posts/events and sales leads). Today is '+today()+'. Return ONLY JSON: {"posts":[{"date":"YYYY-MM-DD","format":"Reel|Carousel|Photo|Story|WhatsApp group|Meet / track day","topic":"","reach":0,"likes":0,"comments":0,"saves":0,"shares":0,"dms":0,"followers":0,"convos":0}],"leads":[{"date":"YYYY-MM-DD","source":"Instagram DM|WhatsApp group|Track day / meet|Rawspeed client|Referral|UTN|SGS|Other","customer":"","part":"","tier":"A|B|C","status":"quote|won|delivered|lost","price":0,"cost":0}]}. Tiers: A desk/consumer PLA-PETG (~6000 ARS), B functional ASA/PETG (~15000), C structural PA6-CF (~35000). Use 0 for unknown numbers, resolve relative dates against today, and leave an array empty when the text has nothing for it. Argentine numbers use "." for thousands. Text:\n\n'+txt;
+  var prompt='You extract structured rows for an Argentine 3D-printing side business (Instagram posts/events and sales leads). Today is '+today()+'. Return ONLY JSON: {"posts":[{"date":"YYYY-MM-DD","format":"Reel|Carousel|Photo|Story|WhatsApp group|Meet / track day","topic":"","reach":0,"likes":0,"comments":0,"saves":0,"shares":0,"dms":0,"followers":0,"convos":0}],"leads":[{"date":"YYYY-MM-DD","brand":"Honda|BMW|Alfa Romeo|Other","model":"","source":"Instagram DM|WhatsApp group|Track day / meet|Rawspeed client|Referral|UTN|SGS|Other","customer":"","part":"","tier":"A|B|C","status":"quote|won|delivered|lost","price":0,"cost":0}]}. Tiers: A desk/consumer PLA-PETG (~6000 ARS), B functional ASA/PETG (~15000), C structural PA6-CF (~35000). Use 0 for unknown numbers, resolve relative dates against today, and leave an array empty when the text has nothing for it. Argentine numbers use "." for thousands. Text:\n\n'+txt;
   sample.json(prompt,{modelTier:"quick",cache:false}).then(function(r){
     smartRows={posts:(r.posts||[]),leads:(r.leads||[])};
     var n=smartRows.posts.length+smartRows.leads.length;
     $("smartMsg").textContent=n?"Check these "+n+" row(s), then save.":"Nothing to save was found in that text.";
     if(n){$("smartOut").innerHTML='<div class="scroll" style="margin-top:10px"><table><thead><tr><th>Type</th><th>Date</th><th>Detail</th><th>Numbers</th></tr></thead><tbody>'+
       smartRows.posts.map(function(p){return '<tr><td>Post</td><td class="num">'+esc(p.date)+'</td><td>'+esc(p.format)+' · '+esc(p.topic)+'</td><td class="num">reach '+num(p.reach)+', likes '+num(p.likes)+', saves '+num(p.saves)+', DMs '+num(p.dms)+'</td></tr>'}).join("")+
-      smartRows.leads.map(function(l){return '<tr><td>Lead</td><td class="num">'+esc(l.date)+'</td><td>'+esc(l.customer)+' · '+esc(l.part)+' · tier '+esc(l.tier)+' · '+esc(l.source)+'</td><td class="num">'+esc(l.status)+', '+ars(l.price)+'</td></tr>'}).join("")+
+      smartRows.leads.map(function(l){return '<tr><td>Lead</td><td class="num">'+esc(l.date)+'</td><td>'+esc(l.brand)+' '+esc(l.model)+' · '+esc(l.customer)+' · '+esc(l.part)+' · tier '+esc(l.tier)+' · '+esc(l.source)+'</td><td class="num">'+esc(l.status)+', '+ars(l.price)+'</td></tr>'}).join("")+
       '</tbody></table></div><div class="row" style="margin-top:10px"><button class="btn" id="smartSave">Save rows</button><button class="btn ghost" id="smartCancel">Discard</button></div>'}
   }).catch(function(e){$("smartMsg").textContent=sampleErr(e)||"Cancelled."}).then(function(){$("smartGo").disabled=false});
 });
@@ -445,13 +504,13 @@ $("smartOut").addEventListener("click",function(e){
 });
 
 var turns=[],chatCtl=null;
-var PLAN="PLAN FACTS: Agus is a mechanical engineering student at UTN-FRBA, works at SGS Argentina, and owns Rawspeed (automotive photo/cinema studio, Buenos Aires). He bought a Bambu Lab X2D Combo in 9 interest-free cuotas of ARS 395,000 (total 3,555,000); first cuota week 1 of Nov 2026; monotributo not needed. Tiers: A desk/consumer PLA/PETG cost 1,260 price 6,000; B functional ASA/PETG cost 3,420 price 15,000; C structural PA6-CF + PA/PET support cost 11,330 price 35,000. X2D: 256x256x260 mm, 300 C nozzle, 65 C active chamber, limited dual-material; no PC or PPS-CF. PLA is never valid as support for engineering materials. Base ramp jobs/month: M1-2 4, M3-4 8, M5-6 12, M7+ 15 (3A/4B/8C). Targets: Instagram 2-3 posts/week, 4-6% engagement, 3 WhatsApp groups with 1 showcase/month, 1-2 events/month with 3-5 conversations each, poly-industry (SGS/UTN) outreach from month 5. Safety rule: no safety-critical parts. Pillars: Process, Proof, Education, Offer, Community.";
+var PLAN="PLAN FACTS: Agus is a mechanical engineering student at UTN-FRBA, works at SGS Argentina, and owns Rawspeed (automotive photo/cinema studio, Buenos Aires). He bought a Bambu Lab X2D Combo in 9 interest-free cuotas of ARS 395,000 (total 3,555,000); first cuota week 1 of Nov 2026; monotributo not needed. Tiers: A desk/consumer PLA/PETG cost 1,260 price 6,000; B functional ASA/PETG cost 3,420 price 15,000; C structural PA6-CF + PA/PET support cost 11,330 price 35,000. X2D: 256x256x260 mm, 300 C nozzle, 65 C active chamber, limited dual-material; no PC or PPS-CF. PLA is never valid as support for engineering materials. Base ramp jobs/month: M1-2 4, M3-4 8, M5-6 12, M7+ 15 (3A/4B/8C). Targets: Instagram 2-3 posts/week, 4-6% engagement, 3 WhatsApp groups with 1 showcase/month, 1-2 events/month with 3-5 conversations each, poly-industry (SGS/UTN) outreach from month 5. Focus: cars made before 2000 that lose aftermarket and parts support, especially Honda (Civic EG/EK, Integra, Accord, CRX), BMW (E30, E36, E34) and Alfa Romeo (33, 145, 155, 164, 916), plus general clip/bracket parts; such parts sell well locally, and foreign printed-parts shops are examples, not competitors. A friend works on E36 side skirts and M-style moldings. Safety rule: no safety-critical parts. Pillars: Process, Proof, Education, Offer, Community.";
 function context(){
   var m=selMonth;
   var rec=function(a){return a.slice().sort(function(x,y){return x.date<y.date?1:-1}).slice(0,25)};
   var calDone=data.cal.filter(function(c){return c.done}).map(function(c){return c.id.slice(1)});
   return PLAN+"\n\nLIVE DATA (today "+today()+", calendar Day 1 = "+startDate+", venture month shown = "+(m+1)+"):\n"+
-   JSON.stringify({monthActual:monthStats(m),monthTarget:{jobs:TARGETS[m][0],revenue:TARGETS[m][1],netMargin:TARGETS[m][2]},calendarDaysDone:calDone,recentPosts:rec(data.posts),recentLeads:rec(data.leads)});
+   JSON.stringify({partsTargets:data.targets.map(function(t){var c=CAT.filter(function(x){return x[0]===t.id})[0];return {id:t.id,brand:c&&c[1],cars:c&&c[2],status:t.status,note:t.note}}),monthActual:monthStats(m),monthTarget:{jobs:TARGETS[m][0],revenue:TARGETS[m][1],netMargin:TARGETS[m][2]},calendarDaysDone:calDone,recentPosts:rec(data.posts),recentLeads:rec(data.leads)});
 }
 function addMsg(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;$("chat").appendChild(d);$("chat").scrollTop=$("chat").scrollHeight;return d}
 function send(text){
@@ -484,7 +543,7 @@ function renderAll(){
   var s=data.settings.find(function(x){return x.id==="main"});
   if(s&&s.startDate&&s.startDate!==startDate){startDate=s.startDate}
   $("startDate").value=startDate;
-  renderDash();renderCal();renderLog();
+  renderDash();renderCal();renderParts();renderLog();
 }
 listeners.push(renderAll);
 
@@ -492,16 +551,16 @@ var sel=$("mSel");MONTHS.forEach(function(n,i){var o=document.createElement("opt
 selMonth=currentMonth();sel.value=selMonth;
 sel.addEventListener("change",function(){selMonth=parseInt(sel.value,10);renderDash()});
 $("pDate").value=today();$("lDate").value=today();$("startDate").value=startDate;
-["posts","leads","cal","settings"].forEach(function(k){data[k]=lsGet(k)});
+["posts","leads","cal","settings","targets"].forEach(function(k){data[k]=lsGet(k)});
 renderAll();setStatus();
-var h=(location.hash||"").replace("#","");if(["dash","cal","log","coach"].indexOf(h)>=0)showTab(h);
+var h=(location.hash||"").replace("#","");if(["dash","cal","parts","log","coach"].indexOf(h)>=0)showTab(h);
 
 function boot(){
   if(!window.claude||!window.claude.use){return}
   window.claude.use("db").then(function(db){
     if(!db){banner();return}
     store.mode="db";store.db=db;
-    ["posts","leads","cal","settings"].forEach(function(k){data[k]=[];
+    ["posts","leads","cal","settings","targets"].forEach(function(k){data[k]=[];
       db.collection(k).onSnapshot(function(snap){data[k]=snap.docs.map(function(d){var o=d.data()||{};o.id=d.id;return o});changed()},function(e){toast("Live data error: "+(e&&e.message||e))})});
     setStatus();
   }).catch(function(){banner()});
